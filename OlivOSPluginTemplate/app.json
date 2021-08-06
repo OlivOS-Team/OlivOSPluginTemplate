@@ -1,0 +1,17 @@
+{
+    "name" : "OlivOS插件默认模板",
+    "namespace" : "OlivOSPluginTemplate",
+    "priority" : 30000,
+    "support" : [
+        {
+            "sdk" : "onebot",
+            "platform" : "qq",
+            "model" : "all"
+        },
+        {
+            "sdk" : "telegram_poll",
+            "platform" : "telegram",
+            "model" : "all"
+        }
+    ]
+}
