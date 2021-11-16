@@ -1,5 +1,6 @@
 {
     "name" : "OlivOS插件默认模板",
+    "author" : "OlivOS-Team",
     "namespace" : "OlivOSPluginTemplate",
     "priority" : 30000,
     "message_mode" : "old_string",
