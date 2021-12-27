@@ -16,7 +16,8 @@ jobs:
               PACK_NAME=${GITHUB_REPOSITORY##*/} 
           fi
           echo "PACK_NAME=$PACK_NAME" >> $GITHUB_ENV
-          zip -r $PACK_NAME.opk $PACK_NAME/
+          cd $PACK_NAME
+          zip -r ../$PACK_NAME.opk ./
       - name: Upload
         uses: actions/upload-artifact@v2
         with:
