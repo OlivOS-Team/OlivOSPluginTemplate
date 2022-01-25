@@ -3,7 +3,9 @@
     "author" : "OlivOS-Team",
     "namespace" : "OlivOSPluginTemplate",
     "priority" : 30000,
-    "message_mode" : "old_string",
+    "svn" : 1,
+    "compatible_svn" : 81,
+    "message_mode" : "olivos_string",
     "support" : [
         {
             "sdk" : "onebot",
