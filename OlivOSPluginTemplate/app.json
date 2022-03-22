@@ -4,7 +4,7 @@
     "namespace" : "OlivOSPluginTemplate",
     "priority" : 30000,
     "svn" : 1,
-    "compatible_svn" : 81,
+    "compatible_svn" : 94,
     "message_mode" : "olivos_string",
     "support" : [
         {
