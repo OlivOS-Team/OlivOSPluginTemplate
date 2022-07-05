@@ -1,1 +1,1 @@
-import OlivOSPluginTemplate.main
+from . import main

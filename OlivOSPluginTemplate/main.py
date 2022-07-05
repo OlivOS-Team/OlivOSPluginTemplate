@@ -17,6 +17,13 @@ class Event(object):
     def save(plugin_event, Proc):
         pass
 
+    def menu(plugin_event, Proc):
+        if plugin_event.data.namespace == 'OlivOSPluginTemplate':
+            if plugin_event.data.event == 'OlivOSPluginTemplate_Menu_001':
+                pass
+            elif plugin_event.data.event == 'OlivOSPluginTemplate_Menu_002':
+                pass
+
 def unity_reply(plugin_event, Proc):
     if plugin_event.data.message == '/bot' or plugin_event.data.message == '.bot' or plugin_event.data.message == '[CQ:at,qq=' + str(plugin_event.base_info['self_id']) + '] .bot':
         plugin_event.reply('OlivOSPluginTemplate')
