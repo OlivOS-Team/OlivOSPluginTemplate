@@ -14,8 +14,8 @@
             "model" : "all"
         },
         {
-            "sdk" : "telegram_poll",
-            "platform" : "telegram",
+            "sdk" : "all",
+            "platform" : "all",
             "model" : "all"
         }
     ],
