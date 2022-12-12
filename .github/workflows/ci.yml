@@ -44,7 +44,7 @@ jobs:
           tag_name: v${{steps.version.outputs.value}}
           release_name: v${{steps.version.outputs.value}}
           # body: {{steps.description.outputs.content}}
-          draft: false
+          draft: true
           prerelease: false
       - name: 上传opk文件
         uses: actions/upload-release-asset@v1.0.1
