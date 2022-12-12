@@ -2,6 +2,7 @@ name: CI
 on:
   workflow_dispatch:
   push:
+    branches: [ main ]
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -9,7 +10,7 @@ jobs:
       PACK_NAME: ""
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Pack
         run: |
           if [ ! $PACK_NAME ]; then
@@ -19,13 +20,38 @@ jobs:
           cd $PACK_NAME
           zip -r ../$PACK_NAME.opk ./
       - name: Upload
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Artifacts
           path: ${{ env.PACK_NAME }}.opk
-      - name: Release
-        if: github.ref_type == 'tag'
-        uses: softprops/action-gh-release@v1
+      - name: 读取当前版本号
+        id: version
+        uses: ashley-taylor/read-json-property-action@v1.0
         with:
-          token: ${{ secrets.GH_TOKEN }}
-          files: ${{ env.PACK_NAME }}.opk
+          path: ./OlivaBiliLive/app.json
+          property: version
+      # - name: read the description file
+      #   id: description
+      #   uses: juliangruber/read-file-action@v1
+      #   with:
+      #     path: ./description.txt
+      - name: 创建GitHub Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{steps.version.outputs.value}}
+          release_name: v${{steps.version.outputs.value}}
+          # body: {{steps.description.outputs.content}}
+          draft: false
+          prerelease: false
+      - name: Upload Release cgo darwin
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: ${{ env.PACK_NAME }}.opk
+          asset_name: ${{ env.PACK_NAME }}.opk
+          asset_content_type: application/zip
