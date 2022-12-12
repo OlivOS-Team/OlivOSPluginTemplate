@@ -5,6 +5,7 @@
     "info" : "这是OlivOS官方插件模板，而这是一条有关插件的简介。",
     "priority" : 30000,
     "svn" : 1,
+    "version" : "1.0.0",
     "compatible_svn" : 100,
     "message_mode" : "olivos_string",
     "support" : [
