@@ -30,7 +30,7 @@ jobs:
         with:
           path: ./OlivaBiliLive/app.json
           property: version
-      # - name: read the description file
+      # - name: 读取描述文件(若有）
       #   id: description
       #   uses: juliangruber/read-file-action@v1
       #   with:
@@ -46,7 +46,7 @@ jobs:
           # body: {{steps.description.outputs.content}}
           draft: false
           prerelease: false
-      - name: Upload Release cgo darwin
+      - name: 上传opk文件
         uses: actions/upload-release-asset@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
