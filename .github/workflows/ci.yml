@@ -28,7 +28,7 @@ jobs:
         id: version
         uses: ashley-taylor/read-json-property-action@v1.0
         with:
-          path: ./OlivaBiliLive/app.json
+          path: ./${GITHUB_REPOSITORY##*/}/app.json
           property: version
       # - name: 读取描述文件(若有）
       #   id: description
