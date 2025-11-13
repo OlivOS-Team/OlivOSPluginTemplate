@@ -6,7 +6,7 @@
     "priority" : 30000,
     "svn" : 1,
     "version" : "1.0.0",
-    "compatible_svn" : 100,
+    "compatible_svn" : 190,
     "message_mode" : "olivos_string",
     "support" : [
         {
