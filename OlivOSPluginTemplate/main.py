@@ -1,9 +1,10 @@
 import OlivOS
-import OlivOSPluginTemplate
+import OlivOSPluginTemplate  # noqa: F401
 
 gProc = None
 
 gPluginName = 'OlivOS插件默认模板'
+
 
 class Event(object):
     def init(plugin_event, Proc):
@@ -41,9 +42,14 @@ class Event(object):
             elif plugin_event.data.event == 'OlivOSPluginTemplate_Menu_002':
                 pass
 
+
 def unity_reply(plugin_event, Proc):
     # 被动回复消息示例
-    if plugin_event.data.message == '/bot' or plugin_event.data.message == '.bot' or plugin_event.data.message == '[CQ:at,qq=' + str(plugin_event.base_info['self_id']) + '] .bot':
+    if (
+        plugin_event.data.message == '/bot'
+        or plugin_event.data.message == '.bot'
+        or plugin_event.data.message == '[CQ:at,qq=' + str(plugin_event.base_info['self_id']) + '] .bot'
+    ):
         plugin_event.reply('OlivOSPluginTemplate')
     # 主动发送消息示例
     elif plugin_event.data.message == '你好':
@@ -62,6 +68,7 @@ def unity_reply(plugin_event, Proc):
                 '我不好'
             )
 
+
 def poke_reply(plugin_event, Proc):
     # 戳一戳回复消息示例
     if plugin_event.data.target_id == plugin_event.base_info['self_id']:
@@ -71,18 +78,21 @@ def poke_reply(plugin_event, Proc):
     elif plugin_event.data.group_id == -1:
         plugin_event.reply('OlivOSPluginTemplate')
 
+
 # 主动发送消息示例实现
 def send_message_force(botHash, send_type, target_id, message):
     global gProc
     global gPluginName
     Proc = gProc
-    if Proc is not None \
-    and botHash in Proc.Proc_data['bot_info_dict']:
+    if (
+        Proc is not None
+        and botHash in Proc.Proc_data['bot_info_dict']
+    ):
         pluginName = gPluginName
         plugin_event = OlivOS.API.Event(
             OlivOS.contentAPI.fake_sdk_event(
-                bot_info = Proc.Proc_data['bot_info_dict'][botHash],
-                fakename = pluginName
+                bot_info=Proc.Proc_data['bot_info_dict'][botHash],
+                fakename=pluginName
             ),
             Proc.log
         )
