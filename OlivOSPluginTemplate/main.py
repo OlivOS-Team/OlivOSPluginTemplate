@@ -81,8 +81,6 @@ def poke_reply(plugin_event, Proc):
 
 # 主动发送消息示例实现
 def send_message_force(botHash, send_type, target_id, message):
-    global gProc
-    global gPluginName
     Proc = gProc
     if (
         Proc is not None
