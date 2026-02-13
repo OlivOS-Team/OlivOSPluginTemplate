@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=63.2.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "olivos-plugin-OlivOSPluginTemplate"
+version = "1.0.0"
+description = "这是OlivOS官方插件模板，而这是一条有关插件的简介。"
+readme = "README.md"
+requires-python = ">=3.7"
+authors = []
+license = {text = "AGPLv3 License"}
+classifiers = [
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+]
+
+dependencies = [
+    "olivos",
+]
+
+[project.urls]
+Repository = "https://github.com/OlivOS-Team/OlivOSPluginTemplate"
+Issues = "https://github.com/OlivOS-Team/OlivOSPluginTemplate/issues"
