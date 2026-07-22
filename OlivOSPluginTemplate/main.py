@@ -53,19 +53,23 @@ def unity_reply(plugin_event, Proc):
         plugin_event.reply('OlivOSPluginTemplate')
     # 主动发送消息示例
     elif plugin_event.data.message == '你好':
+        # 新增 QQGuildV2 路由
+        flag_from_qq_Guild = getattr(plugin_event.data, 'extend', {}).get('flag_from_qq', False)
         if plugin_event.plugin_info['func_type'] == 'group_message':
             send_message_force(
                 plugin_event.bot_info.hash,
                 'group',
                 plugin_event.data.group_id,
-                '我好'
+                '我好',
+                flag_from_qq_Guild
             )
         elif plugin_event.plugin_info['func_type'] == 'private_message':
             send_message_force(
                 plugin_event.bot_info.hash,
                 'private',
                 plugin_event.data.user_id,
-                '我不好'
+                '我不好',
+                flag_from_qq_Guild
             )
 
 
@@ -80,7 +84,7 @@ def poke_reply(plugin_event, Proc):
 
 
 # 主动发送消息示例实现
-def send_message_force(botHash, send_type, target_id, message):
+def send_message_force(botHash, send_type, target_id, message, flag_from_qq_Guild=False):
     Proc = gProc
     if (
         Proc is not None
@@ -94,4 +98,10 @@ def send_message_force(botHash, send_type, target_id, message):
             ),
             Proc.log
         )
+        if flag_from_qq_Guild:
+            extend = getattr(plugin_event.data, 'extend', {}) or {}
+            extend.update(
+                flag_from_qq=True, flag_from_direct=send_type == 'private', reply_msg_id=None
+            )
+            plugin_event.data.extend = extend
         plugin_event.send(send_type, target_id, message)
