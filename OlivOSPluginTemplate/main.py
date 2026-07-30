@@ -48,7 +48,12 @@ def unity_reply(plugin_event, Proc):
     if (
         plugin_event.data.message == '/bot'
         or plugin_event.data.message == '.bot'
-        or plugin_event.data.message == '[CQ:at,qq=' + str(plugin_event.base_info['self_id']) + '] .bot'
+        or plugin_event.data.message in [
+            # app.json 中 compatible_svn < 190 的格式
+            f"[OP:at,id={str(plugin_event.base_info['self_id'])}] .bot",
+            # app.json 中 compatible_svn >= 190 的格式
+            f"[OP:at,id={str(plugin_event.base_info['self_id'])}],name={plugin_event.data.sender['name']} .bot"
+        ]
     ):
         plugin_event.reply('OlivOSPluginTemplate')
     # 主动发送消息示例
