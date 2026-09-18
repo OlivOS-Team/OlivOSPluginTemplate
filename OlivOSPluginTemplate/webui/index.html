@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>OlivOS 插件模板</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #fff;
+        --text: #20252b;
+        --muted: #626b75;
+        --line: #dce1e6;
+        --brand: #006c98;
+        --button: #edf7fc;
+        --hover: #dfeff7;
+        --error: #b82c35;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #22252a;
+          --text: #eaedf0;
+          --muted: #aab1ba;
+          --line: #3b4047;
+          --brand: #63cfff;
+          --button: #183442;
+          --hover: #214657;
+          --error: #ff9296;
+        }
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        letter-spacing: 0;
+        font: 15px/1.6 system-ui, 'Microsoft YaHei', sans-serif;
+      }
+      main {
+        max-width: 720px;
+        padding: 24px;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+      header img {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+      }
+      h1 {
+        margin: 0;
+        font-size: 20px;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+      }
+      input,
+      button {
+        font: inherit;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 8px 12px;
+      }
+      input {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        background: var(--bg);
+        color: var(--text);
+        margin-bottom: 12px;
+      }
+      button {
+        color: var(--brand);
+        background: var(--button);
+        cursor: pointer;
+        transition: background-color 120ms ease;
+      }
+      button:hover:not(:disabled) {
+        background: var(--hover);
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+      :focus-visible {
+        outline: 2px solid var(--brand);
+        outline-offset: 3px;
+      }
+      #status {
+        min-height: 24px;
+        color: var(--muted);
+        overflow-wrap: anywhere;
+      }
+      #status.error {
+        color: var(--error);
+      }
+      h2 {
+        margin: 24px 0 8px;
+        font-size: 16px;
+      }
+      #reply {
+        display: block;
+        min-height: 80px;
+        border-top: 1px solid var(--line);
+        padding-top: 12px;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+      }
+      @media (max-width: 480px) {
+        main {
+          padding: 16px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        button {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <img src="/static/logo.png" alt="OlivOS" width="36" height="36" />
+        <h1>插件模板</h1>
+      </header>
+      <label for="message">消息</label>
+      <input id="message" maxlength="200" required autocomplete="off" />
+      <button id="send" type="button">发送</button>
+      <p id="status" role="status" aria-live="polite"></p>
+      <h2>回复</h2>
+      <output id="reply" aria-live="polite"></output>
+    </main>
+    <script>
+      'use strict';
+
+      const message = document.getElementById('message');
+      const send = document.getElementById('send');
+      const status = document.getElementById('status');
+      const reply = document.getElementById('reply');
+      let pending = null;
+      let sequence = 0;
+
+      function finish(text, isError = false) {
+        if (pending) clearTimeout(pending.timer);
+        pending = null;
+        send.disabled = false;
+        status.textContent = text;
+        status.classList.toggle('error', isError);
+      }
+
+      function submit() {
+        if (pending || !message.reportValidity()) return;
+        if (window.parent === window) {
+          finish('请从 OlivOS WebUI 的插件页面入口打开。', true);
+          return;
+        }
+        if (!message.value.trim()) {
+          finish('请输入消息。', true);
+          return;
+        }
+
+        const requestId = `${Date.now()}-${++sequence}`;
+        send.disabled = true;
+        reply.textContent = '';
+        status.classList.remove('error');
+        status.textContent = '正在发送…';
+        pending = {
+          id: requestId,
+          timer: setTimeout(() => finish('请求超时，请稍后重试。', true), 10000),
+        };
+
+        // 宿主补全 namespace 和认证信息；插件页面不接触 token。
+        window.parent.postMessage(
+          {
+            type: 'olivos:plugin_event',
+            event: 'OlivOSPluginTemplate_WebUI_Echo',
+            request_id: requestId,
+            payload: { text: message.value },
+          },
+          '*',
+        );
+      }
+
+      window.addEventListener('message', (event) => {
+        const data = event.data;
+        if (
+          event.source !== window.parent ||
+          !data ||
+          data.type !== 'olivos:plugin_reply' ||
+          !pending ||
+          data.request_id !== pending.id
+        ) {
+          return;
+        }
+        if (typeof data.error === 'string') {
+          finish(data.error, true);
+          return;
+        }
+
+        const payload = data.payload;
+        if (!payload || payload.ok !== true || typeof payload.text !== 'string') {
+          finish(
+            typeof payload?.error === 'string' ? payload.error : '插件返回了无效的数据。',
+            true,
+          );
+          return;
+        }
+        reply.textContent = payload.text;
+        finish('已收到回复。');
+      });
+
+      send.addEventListener('click', submit);
+      message.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' && !event.isComposing) {
+          event.preventDefault();
+          submit();
+        }
+      });
+    </script>
+  </body>
+</html>

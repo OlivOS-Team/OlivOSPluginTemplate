@@ -37,10 +37,32 @@ class Event(object):
     def menu(plugin_event, Proc):
         # 插件菜单事件监听
         if plugin_event.data.namespace == 'OlivOSPluginTemplate':
+            if isinstance(getattr(plugin_event.data, 'webui', None), dict):
+                webui_reply(plugin_event)
+                return
             if plugin_event.data.event == 'OlivOSPluginTemplate_Menu_001':
                 pass
             elif plugin_event.data.event == 'OlivOSPluginTemplate_Menu_002':
                 pass
+
+
+def webui_reply(plugin_event):
+    # 网页请求也通过 menu 分发，使用原事件回包以保留会话隔离。
+    request_id = plugin_event.data.webui.get('request_id')
+    if not isinstance(request_id, str) or not request_id or len(request_id) > 128:
+        return
+
+    payload = getattr(plugin_event.data, 'payload', None)
+    if plugin_event.data.event != 'OlivOSPluginTemplate_WebUI_Echo':
+        response = {'ok': False, 'error': '未知的 WebUI 事件'}
+    elif not isinstance(payload, dict) or not isinstance(payload.get('text'), str):
+        response = {'ok': False, 'error': '消息必须为文本'}
+    elif not payload['text'].strip() or len(payload['text']) > 200:
+        response = {'ok': False, 'error': '请输入 1 至 200 字的消息'}
+    else:
+        response = {'ok': True, 'text': payload['text'], 'plugin': gPluginName}
+
+    plugin_event.send('webui', request_id, response)
 
 
 def unity_reply(plugin_event, Proc):

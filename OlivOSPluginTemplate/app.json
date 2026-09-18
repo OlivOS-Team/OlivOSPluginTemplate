@@ -20,6 +20,13 @@
             "model" : "all"
         }
     ],
+    "webui_config": [
+        {
+            "title": "插件模板",
+            "type": "iframe",
+            "path": "webui/index.html"
+        }
+    ],
     "menu_config": [
         {
             "title": "插件菜单1",
