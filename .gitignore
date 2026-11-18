@@ -1,3 +1,9 @@
 build
 *.egg-info
 __pycache__
+.ci
+test-results
+.coverage
+.coverage.*
+.pytest_cache
+flake8_output.log
